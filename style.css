@@ -48,3 +48,17 @@ p{
     border-radius: 12px;
     background-color: #f4f3ff;
 }
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+.subscribe-card{
+    padding: 24px;
+    margin-top: 32px;
+    background-color: #f4f3ff;
+    border: 1px solid #deddea;
+    border-radius: 12px;
+}
