@@ -1,0 +1,13 @@
+.features-list {
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.feature-card{
+    padding: 20px 24px;
+    margin-bottom: 16px;
+    border: 1px solid #deddea;
+    border-radius: 12px;
+    background-color: #f4f3ff;
+}
