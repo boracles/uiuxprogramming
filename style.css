@@ -39,11 +39,15 @@ p{
     list-style-type: none;
     padding-left: 0;
     margin: 0;
+    display: flex;
+    align-items: stretch;
+    gap: 24px;
 }
 
 .feature-card{
+    flex:1;
     padding: 20px 24px;
-    margin-bottom: 16px;
+    margin-bottom: 0px;
     border: 1px solid #deddea;
     border-radius: 12px;
     background-color: #f4f3ff;
@@ -61,4 +65,28 @@ p{
     background-color: #f4f3ff;
     border: 1px solid #deddea;
     border-radius: 12px;
+}
+
+button{
+    padding:12px 18px;
+    border:0;
+    border-radius: 10px;
+    color: #ffffff;
+    background-color: #635bff;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+button:hover{
+    background-color: #4b43db;
+}
+
+button:focus,
+input:focus{
+    outline: 3px solid #b9b5ff;
+    outline-offset: 2px;
+}
+
+button:active{
+    transform: translateY(1px);
 }
