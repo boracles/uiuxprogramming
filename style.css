@@ -90,19 +90,17 @@ p{
     padding-left: 0;
     margin: 0;
 
-    display: flex;
-    
-    /*카드가 좁게 눌리지 않고 다음 줄로 이동*/
-    flex-wrap: wrap;
+    display: grid;
 
-    align-items: stretch;
+    /* 들어갈 수 있는 만큼 열을 만들고,
+    카드 너비는 최소 260px부터 남은 공간까지 사용 */
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+
     gap: 24px;
 }
 
 .feature-card{
-    /* 늘어나기 1, 줄어들기 1, 기본너비 260px */
-    flex:1 1 260px;
-
+    min-width: 0;
     padding: 20px 24px;
     margin-bottom: 0px;
     border: 1px solid #deddea;
@@ -165,4 +163,60 @@ input:focus{
 
 button:active{
     transform: translateY(1px);
+}
+
+/* 웹페이지가 표시되는 가로 폭이 768px 이하일 때만 적용 */
+@media (max-width: 768px){
+    body{
+        font-size: 16px;
+    }
+
+    header{
+        padding-top: 32px;
+        padding-bottom: 24px;   
+    }
+
+    section{
+        margin-top: 40px;
+    }
+
+    h1{
+        font-size: 36px;
+    }
+
+    h2{
+        font-size: 28px;
+    }
+
+    /* 가로 메뉴를 위에서 아래로 배치*/
+    nav{
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    nav a{
+        /* 링크 글자 주변에도 누를 수 있는 여백 추가 */
+        padding: 8px 0;
+    }
+
+    .features-list{
+        grid-template-columns: 1fr;
+    }
+
+    /* 이메일 입력창과 버튼도 한 열로 배치*/
+    form{
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    input,
+    button{
+        width: 100%;
+    }
+
+    button{
+        /* 모바일에서도 버튼의 누르는 영역이 너무 낮아지지 않게 설정*/
+        min-height: 48px;
+    }
 }
