@@ -184,6 +184,131 @@ button:active{
     cursor: not-allowed;
 }
 
+.event-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+}
+
+.event-card{
+    min-width: 0;
+    padding: 24px;
+    border: 1px solid #deddea;
+    border-radius: 12px;
+    background-color: #ffffff;
+}
+
+.event-card label:not(.agree-row){
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.event-card input[type="text"]{
+    width: 100%;
+}
+
+.agree-row{
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.agree-row input{
+    flex: 0 0 auto;
+    margin-top: 6px;
+}
+
+#startButton:disabled {
+    color: #ffffff;
+    background-color: #a8a8b2;
+    cursor: not-allowed;
+}
+
+body.dark{
+    color: #f4f4f8;
+    background-color: #20212a;
+}
+
+body.dark p,
+body.dark nav a{
+    color: #d8b8e2;
+}
+
+body.dark .feature-card,
+body.dark .event-card,
+body.dark .subscribe-card{
+    background-color: #50515f;
+    border-color: #2d2e38;
+}
+
+#agreeMessage{
+    padding: 12px;
+    border-radius: 10px;
+    background-color: #ecebf2;
+}
+
+#agreeMessage.is-ready{
+    color: #245c3a;
+    background-color: #e7f7ed;
+    font-weight: 700;
+}
+
+.tabs{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+
+.tab{
+    color: #5b5870;
+    background-color: #ffffff;
+    border: 1px solid #deddea;
+}
+
+.tab:hover{
+    color: #ffffff;
+    background-color: #4b43db;
+}
+
+.tab.is-active{
+    color: #635bff;
+    background-color: #ffffff;
+    border-color: #635bff;
+    border-bottom: 4px solid currentColor;
+    font-weight: 700;
+}
+
+.panel{
+    padding: 24px;
+    border: 1px solid #deddea;
+    border-radius: 12px;
+    background-color: #f4f3ff;
+}
+
+.panel[hidden]{
+    display: none;
+}
+
+body.dark .tab{
+    color: #d8d8e2;
+    background-color: #2d2e38;
+    border-color: #50515f;
+}
+
+body.dark .tab.is-active{
+    color:#b9b5ff;
+    border-color: #b8b5ff;
+}
+
+body.dark .panel
+{
+    background-color: #2d2e38;
+    border-color: #50515f;
+}
+
+
 /* 웹페이지가 표시되는 가로 폭이 768px 이하일 때만 적용 */
 @media (max-width: 768px){
     body{
@@ -237,5 +362,15 @@ button:active{
     button{
         /* 모바일에서도 버튼의 누르는 영역이 너무 낮아지지 않게 설정*/
         min-height: 48px;
+    }
+
+    .tabs {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .tab{
+        width: 100%;
+        text-align: left;
     }
 }

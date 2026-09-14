@@ -45,22 +45,70 @@
 
         <section id="features">
             <h2>훈련 기능</h2>
-            <ul class="features-list">
-                <li class="feature-card">
-                    <h3>단계별 발표 연습</h3>
-                    <p> 연습한 발표 상황을 선택하고 반복해서 연습합니다.</p>
-                </li>
 
-                <li class="feature-card">
-                    <h3>가상 청중 연습</h3>
-                    <p>가상 청중 앞에서 발표를 연습하고, 청중의 반응을 확인합니다.</p>
-                </li>
+            <div class="tabs" role="tablist" aria-label="기능 선택">
+                <button 
+                    id="tab-practice" 
+                    class="tab is-active" 
+                    type="button"
+                    role="tab" 
+                    aria-selected="true" 
+                    aria-controls="feature-practice"
+                    data-target="#feature-practice">
+                    단계별 연습
+                </button>
 
-                <li class="feature-card">
-                    <h3>발표 피드백</h3>
-                    <p>발표 후, AI가 제공하는 피드백을 통해 개선점을 확인합니다.</p>
-                </li>
-            </ul>
+                <button
+                    id="tab-audience"
+                    class="tab"
+                    type="button"
+                    role="tab"
+                    aria-selected="false"
+                    aria-controls="feature-audience"
+                    data-target="#feature-audience">
+                    가상 청중
+                </button>
+
+                <button
+                    id="tab-feedback"
+                    class="tab"
+                    type="button"
+                    role="tab"
+                    aria-selected="false"
+                    aria-controls="feature-feedback"
+                    data-target="#feature-feedback">
+                    발표 피드백
+                </button>
+            </div>
+
+            <div    
+                id="feature-practice"
+                class="panel is-active"
+                role="tabpanel"
+                aria-labelledby="tab-practice">
+                <h3>단계별 발표 연습</h3>
+                <p>발표 상황을 선택하고 단계별로 나누어 연습할 수 있습니다.</p>
+            </div>
+
+            <div
+                id="feature-audience"
+                class="panel"
+                role="tabpanel"
+                aria-labelledby="tab-audience"
+                hidden>
+                <h3>가상 청중 연습</h3>
+                <p>가상 청중의 반응을 확인하며 실제 발표처럼 연습할 수 있습니다.</p>
+            </div>
+
+            <div
+                id="feature-feedback"
+                class="panel"
+                role="tabpanel"
+                aria-labelledby="tab-feedback"
+                hidden>
+                <h3>발표 피드백</h3>
+                <p>발표가 끝난 뒤 개선할 부분과 다음 연습 목표를 확인합니다.</p>
+            </div>
         </section>
 
         <section id="steps">
@@ -72,6 +120,38 @@
                 <li>가상 청중 앞에서 발표를 연습합니다.</li>
                 <li>AI가 제공하는 피드백을 확인하고 개선합니다.</li>
             </ol>
+        </section>
+
+        <section id="event-practice">
+            <h2>발표 준비 설정</h2>
+
+            <div class="event-grid">
+                <article class="event-card">
+                    <h3>화면 테마</h3>
+                    <button id="themeButton" type="button">다크 테마로 바꾸기</button>
+                </article>
+
+                <article class="event-card">
+                    <h3>발표자 정보</h3>
+                    <label for="nickname">발표자 이름</label>
+                    <input type="text" id="nickname" maxlength="10">
+                    <p id="nicknameCount" aria-live="polite">0 / 10</p>
+                </article>
+
+                <article class="event-card">
+                    <h3>녹음 활용 동의</h3>
+                    <label class="agree-row">
+                        <input type="checkbox" id="agreeCheck">
+                        발표 분석을 위한 녹음 활용에 동의합니다. 
+                    </label>
+                    <p id="agreeMessage" aria-live="polite">
+                        동의 후 훈련을 시작할 수 있습니다.
+                    </p>
+                    <button id="startButton" type="button" disabled>
+                        훈련 시작하기
+                    </button>
+                </article>
+            </div>
         </section>
 
         <section id="subscribe" class="subscribe-card">
