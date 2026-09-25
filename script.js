@@ -4,15 +4,24 @@ const steps = [...document.querySelectorAll(".flow-step")];
 const progressItems = [...document.querySelectorAll(".progress-item")];
 const titleInput = document.querySelector("#presentation-title");
 const titleError = document.querySelector("#title-error");
+const titleField = document.querySelector("#title-field");
+const titleHelp = document.querySelector("#title-help");
+const titleCount = document.querySelector("#title-count");
 const nicknameInput = document.querySelector("#nickname");
 const nicknameCount = document.querySelector("#nickname-count");
 const qnaOption = document.querySelector("#qna-option");
 const qnaOptions = document.querySelector("#qna-options");
+const qnaInputs = document.querySelectorAll('input[name="qna-count"]');
 const planList = document.querySelector("#plan-list");
 const emptyState = document.querySelector("#empty-state");
 const planCount = document.querySelector("#plan-count");
 const archiveStatus = document.querySelector("#archive-status");
 const planDialog = document.querySelector("#plan-dialog");
+
+const saveButton = document.querySelector("#save-plan");
+const submitStatus = document.querySelector("#submit-status");
+const completeMessage = document.querySelector("#complete-message");
+let isSubmitting = false;
 
 function readPlans() {
   try {
@@ -62,16 +71,40 @@ function showStep(number) {
   document.querySelector("#planner").scrollIntoView({ block: "start", behavior: "smooth" });
 }
 
+function updateTitleExperience() { 
+    const length = titleInput.value.length;
+    const valid = titleInput.value.trim().length >= 2;
+    const hasError = titleInput.getAttribute("aria-invalid") === "true";
+
+    titleCount.textContent = length + " / 60자";
+    titleField.classList.toggle("has-error", hasError);
+    titleField.classList.toggle("is-valid", valid && !hasError);
+    titleHelp.textContent = hasError
+        ? "제목 입력 조건을 다시 확인해 주세요."
+        : valid
+            ? "입력 조건을 충족했습니다."
+    : "2자 이상 60자 이하로 입력해 주세요."
+}
+
 function validateTitle() {
   const title = titleInput.value.trim();
   if (!title) {
-    titleError.textContent = "발표 제목을 입력해 주세요. 공백만으로는 저장할 수 없습니다.";
-    titleInput.setAttribute("aria-invalid", "true");
+    titleError.textContent = "발표 제목을 입력해 주세요.";
+      titleInput.setAttribute("aria-invalid", "true");
+      updateTitleExperience();
     titleInput.focus();
     return false;
   }
+    if (title.length < 2) { 
+        titleError.textContent = "발표 제목은 2자 이상 입력해 주세요.";
+        titleInput.setAttribute("aria-invalid", "true");
+        updateTitleExperience();
+        titleInput.focus();
+        return false;
+    }
   titleError.textContent = "";
-  titleInput.removeAttribute("aria-invalid");
+    titleInput.removeAttribute("aria-invalid");
+    updateTitleExperience();
   return true;
 }
 
@@ -97,21 +130,65 @@ function updateSummary() {
   document.querySelector("#summary-qna").textContent = qnaText(values);
 }
 
+function setSubmitState(state, message) { 
+    isSubmitting = state === "loading";
+    form.setAttribute("aria-busy", String(isSubmitting));
+    saveButton.disabled = isSubmitting;
+    saveButton.textContent = isSubmitting ? "저장하는 중..." : "계획 저장하기 →";
+    submitStatus.textContent = message;
+    submitStatus.classList.toggle("is-success", state === "success");
+    submitStatus.classList.toggle("has-error", state === "error");
+}
+
 titleInput.addEventListener("input", () => {
-  if (titleInput.getAttribute("aria-invalid") === "true") validateTitle();
+    if (titleInput.getAttribute("aria-invalid") === "true") {
+        validateTitle();
+    } else { 
+        updateTitleExperience();
+    }
 });
+updateTitleExperience();
 
 nicknameInput.addEventListener("input", () => {
   nicknameCount.textContent = `${nicknameInput.value.length} / 10자`;
 });
 
-qnaOption.addEventListener("change", () => {
-  qnaOptions.hidden = !qnaOption.checked;
-});
+function syncQnaOptions() { 
+    const open = qnaOption.checked;
+    qnaOption.setAttribute("aria-expanded", String(open));
+    qnaOptions.hidden = !open;
+    qnaInputs.forEach((input) => {
+        input.disabled = !open;
+    });
+}
+
+qnaOption.addEventListener("change", syncQnaOptions);
+syncQnaOptions();
 
 form.addEventListener("submit", (event) => {
-  event.preventDefault();
-  if (currentStep === 1) document.querySelector("#info-next").click();
+    event.preventDefault();
+  
+    if (currentStep === 1) {
+        if (validateTitle()) showStep(2);
+        return;
+    }
+    if (currentStep !== 3 || isSubmitting) return;
+
+    if (!validateTitle()) { 
+        showStep(1);
+        titleInput.focus();
+        return;
+    }
+
+    setSubmitState("loading", "입력한 계획을 저장하고 있습니다.");
+    window.setTimeout(() => {
+        if (!saveCurrentPlan()) {
+            setSubmitState("error", "저장하지 못했습니다. 입력 내용을 확인하고 다시 시도해 주세요.");
+            return;
+        }
+        setSubmitState("success", "계획 저장이 완료되었습니다.");
+        showStep(4);
+    }, 600);
 });
 
 document.querySelector("#info-next").addEventListener("click", () => {
@@ -125,34 +202,37 @@ document.querySelector("#option-next").addEventListener("click", () => {
 document.querySelector("#edit-info").addEventListener("click", () => showStep(1));
 document.querySelector("#edit-options").addEventListener("click", () => showStep(2));
 
-document.querySelector("#save-plan").addEventListener("click", () => {
-  if (!validateTitle()) {
-    showStep(1);
-    titleInput.focus();
-    return;
-  }
-  const plan = {
-    id: typeof crypto.randomUUID === "function" ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`,
-    ...getFormValues(),
-    cancelled: false,
-    createdAt: new Date().toISOString()
-  };
-  plans.unshift(plan);
-  const persisted = savePlans();
-  renderPlans();
-  archiveStatus.textContent = persisted
-    ? `‘${plan.title}’ 계획을 저장했습니다. 아래 목록에서 다시 열 수 있습니다.`
-    : "계획을 현재 화면에 저장했습니다. 브라우저 저장 공간을 사용할 수 없어 새로고침하면 사라질 수 있습니다.";
-  document.querySelector("#complete-message").textContent = `‘${plan.title}’ 계획을 내 계획에서 다시 열어볼 수 있습니다.`;
-  showStep(4);
-});
+function saveCurrentPlan() { 
+    const plan = {
+        id: typeof crypto.randomUUID === "function"
+            ? crypto.randomUUID()
+            : `${Date.now()}-${Math.random()}`,
+        ...getFormValues(),
+        cancelled: false,
+        createdAt: new Date().toISOString()
+    };
+
+    plans.unshift(plan);
+    if (!savePlans()) { 
+        plans.shift();
+        return false;
+    }
+
+    renderPlans();
+    archiveStatus.textContent = `'${plan.title}' 계획을 저장했습니다.`;
+    completeMessage.textContent = `'${plan.title}' 계획을 내 계획에서 다시 열어볼 수 있습니다.`;
+    return true;
+}
 
 document.querySelector("#restart-button").addEventListener("click", () => {
   form.reset();
-  qnaOptions.hidden = true;
+    syncQnaOptions();
   nicknameCount.textContent = "0 / 10자";
   titleError.textContent = "";
-  titleInput.removeAttribute("aria-invalid");
+    titleInput.removeAttribute("aria-invalid");
+    titleField.classList.remove("is-valid", "has-error");
+    updateTitleExperience();
+    setSubmitState("idle", "");
   showStep(1);
   titleInput.focus();
 });
