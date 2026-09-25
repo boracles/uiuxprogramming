@@ -145,13 +145,71 @@
                         발표 분석을 위한 녹음 활용에 동의합니다. 
                     </label>
                     <p id="agreeMessage" aria-live="polite">
-                        동의 후 훈련을 시작할 수 있습니다.
+                        동의 후 훈련 설정을 시작할 수 있습니다.
                     </p>
                     <button id="startButton" type="button" disabled>
-                        훈련 시작하기
+                        훈련 설정 시작하기
                     </button>
                 </article>
             </div>
+        </section>
+        
+        <dialog id = "recording-dialog" aria-labelledby="recording-title" aria-describedby="recording-description">
+            <h2 id="recording-title">녹음 활용 안내</h2>
+            <p id="recording-description">발표 훈련에 녹음 기능을 활용할 수 있습니다. 지금은 훈련 조건만 설정하며 녹음은 시작되지 않습니다.</p>
+            <div class = "dialog-actions">
+                <button id ="recording-cancel" type="button">돌아가기</button>
+                <button id ="recording-confirm" type="button">동의하고 설정 시작하기</button>
+            </div>
+        </dialog>
+
+        <section id ="training-flow" class="training-flow" hidden>
+            <h2>발표 훈련 설정</h2>
+            <p class="progress" aria-label="설정 진행 단계">
+                <span class="progress__item">1 · 정보</span>
+                <span class="progress__item">2 · 조건</span>
+                <span class="progress__item">3 · 확인</span>
+            </p>
+
+            <section class="step" data-step="1" hidden>
+                <h3>발표 정보를 입력해 주세요.</h3>
+                <label for="presentation-title">발표 제목</label>
+                <input id="presentaion-title" type="text" placeholder="예: 나의 발표 프로젝트 소개" aria-describedby="title-error">
+                <p id="title-error" class="error-message" aria-live="polite"></p>
+                <button id="title-next" type="button">훈련 조건 선택하기</button>
+            </section>
+
+            <section class="step" data-step="2" hidden>
+                <h3>훈련 조건을 선택해 주세요.</h3>
+                <label for="duration-range">발표 시간</label>
+                <input id="duration-range" type="range" min="0" max="2" step="1" value="1">
+                <output id="duration-value" for="duration-range">5분</output>
+                <label><input type="checkbox" id="qna-option">질의응답 포함</label>
+                <fieldset id="qna-options" hidden>
+                    <legend>질문 수</legend>
+                    <label><input type ="radio" name ="qna-count" value="1">1개</label>
+                    <label><input type="radio" name="qna-count" value="2" checked>2개</label>
+                    <label><input type="radio" name="qna-count" value="3">3개</label>
+                </fieldset>
+                <div class="step-actions">
+                    <button id="option-prev" type="button">이전</button>
+                    <button id="option-next" type="button">내용 확인하기</button>
+                </div>
+            </section>
+
+            <section class="step" data-step="3" hidden>
+                <h3>입력한 내용을 확인해 주세요.</h3>
+                <div class="summary-list">
+                    <div><span>발표 제목</span><strong id="summary-title"></strong></div>
+                    <div><span>발표 시간</span><strong id="summary-duration"></strong></div>
+                    <div><span>질의 응답</span><strong id="summary-qna"></strong></div>
+                </div>
+                <div class="step-actions">
+                    <button id="summary-prev" type="button">수정하기</button>
+                    <button id="finish-button" type="button">설정 완료하기</button>
+                </div>
+            </section>
+            
         </section>
 
         <section id="subscribe" class="subscribe-card">
