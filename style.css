@@ -66,6 +66,18 @@ p { color: var(--muted); }
     box-shadow: inset 0 -3px 0 var(--blue);
 }
 
+.menu-toggle{
+    display: none;
+    min-height: 40px;
+    margin-left: auto;
+    padding: 7px 14px;
+    border: 1px solid var(--line);
+    border-radius: 11px;
+    background: var(--surface);
+    color: var(--ink);
+    font-weight: 700;
+}
+
 .theme-button { flex: none; min-height: 40px; padding: 7px 14px; border: 1px solid var(--line); border-radius: 11px; background: var(--surface); color: var(--ink); font-size: 13px; font-weight: 700; }
 .theme-button:hover { border-color: var(--blue); color: var(--blue); }
 
@@ -286,8 +298,35 @@ body.dark .brand img { filter: invert(1); }
   .container { width: min(100% - 32px, 1120px); }
   .header-inner { flex-wrap: wrap; justify-content: space-between; gap: 0 12px; padding-block: 10px; }
   .brand img { width: 112px; }
-  .site-header nav { order: 3; justify-content: space-between; width: 100%; gap: 9px; padding-top: 9px; }
-  .site-header nav a { font-size: 12px; }
+  
+  .menu-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .site-header .main-nav{
+    display: none;
+    order: 3;
+    width: 100%;
+    margin-left: 0;
+  }
+  .site-header .main-nav.is-open{
+    display: block;
+  }
+  .main-nav ul{
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+    padding-top: 10px;
+  }
+  .main-nav a {
+    display: block;
+    min-height: 44px;
+    padding: 10px 12px;
+    border-radius: 9px;
+    font-size: 14px;
+  }
+
   .theme-button { min-height: 35px; padding: 5px 10px; font-size: 12px; }
   .hero { margin-top: 16px; border-radius: 17px; }
   .hero-copy { min-height: 0; padding: 30px 24px; }
