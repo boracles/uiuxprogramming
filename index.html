@@ -8,15 +8,19 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=20260925-2">
-  <script src="script.js?v=20260925-2" defer></script>
+  <link rel="stylesheet" href="style.css?v=20260927-1">
+  <script src="script.js?v=20260927-1" defer></script>
 </head>
 <body>
+  <a class="skip-link" href="#top">
+    본문 바로가기
+  </a>
   <header class="site-header">
     <div class="container header-inner">
       <a class="brand" href="#top" aria-label="Re:hear 맨 위로">
         <img src="assets/images/rehear-wordmark.png" alt="Re:hear" width="512" height="124">
       </a>
+      <a class="sidebar-cta" href="#planner"><span aria-hidden="true">＋</span> 새 계획 만들기</a>
 
       <button id="menu-toggle" class="menu-toggle" type="button"
       aria-controls="main-nav" aria-expanded="false">
@@ -34,7 +38,7 @@
     </div>
   </header>
 
-  <main id="top">
+  <main id="top" tabindex="-1">
     <section class="hero container" aria-labelledby="hero-title">
       <div class="hero-copy">
         <p class="eyebrow">Practice. Feedback. Real Growth.</p>
@@ -183,7 +187,9 @@
         </button>
       </div>
 
-      <p id="archive-status" class="archive-status" role="status" aria-live="polite"></p>
+      <p id="archive-status" class="archive-status"
+        role="status"
+        aria-live="polite"></p>
       <div id="empty-state" class="empty-state"><span class="empty-icon" aria-hidden="true">↗</span><h3>아직 저장한 계획이 없어요.</h3><p>첫 발표 훈련 계획을 만들면 이곳에서 다시 볼 수 있습니다.</p><a class="button button-secondary" href="#planner">계획 만들러 가기</a></div>
       <ul id="plan-list" class="plan-list" aria-label="저장한 훈련 계획" hidden></ul>
     </section>

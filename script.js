@@ -284,6 +284,15 @@ menuToggle.addEventListener("click", () => {
   menuToggle.setAttribute("aria-expanded", String(isOpen));
 });
 
+document.addEventListener("keydown", (event) => {
+  if (event.key !== "Escape" || !mainNav.classList.contains("is-open")) return;
+
+  mainNav.classList.remove("is-open");
+  menuToggle.textContent = "메뉴 열기";
+  menuToggle.setAttribute("aria-expanded", "false");
+  menuToggle.focus();
+});
+
 navLinks.forEach((link) => {
   link.addEventListener("click", () => {
     mainNav.classList.remove("is-open");
@@ -298,6 +307,40 @@ function getVisiblePlans() {
     if (currentFilter === "cancelled") return plan.cancelled;
     return !plan.cancelled;
   });
+}
+
+// 한 건의 계획을 같은 구조와 상태 규칙을 가진 카드로 만듭니다.
+function createPlanCard(plan) {
+  const card = document.createElement("li");
+  card.className = plan.cancelled ? "plan-card is-cancelled" : "plan-card";
+  const top = document.createElement("div");
+  top.className = "plan-card-top";
+  const state = createText("span", "plan-state", plan.cancelled ? "취소됨" : "저장됨");
+  top.append(state);
+  const date = new Date(plan.createdAt);
+  if (!Number.isNaN(date.getTime())) {
+    const dateText = new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long", day: "numeric" }).format(date);
+    top.append(createText("time", "plan-date", dateText));
+  }
+  const icon = createText("span", "plan-card-icon", "↗");
+  icon.setAttribute("aria-hidden", "true");
+  card.append(top, icon);
+  card.append(createText("h3", "plan-title", plan.title));
+  card.append(createText("p", "plan-meta", plan.duration + "분 연습 · " + qnaText(plan)));
+
+  const actions = document.createElement("div");
+  actions.className = "plan-actions";
+  const openButton = createText("button", "button button-secondary", "내용 보기");
+  openButton.type = "button";
+  openButton.dataset.action = "open";
+  openButton.dataset.id = plan.id;
+  const toggleButton = createText("button", "button button-text", plan.cancelled ? "취소 되돌리기" : "계획 취소하기");
+  toggleButton.type = "button";
+  toggleButton.dataset.action = "toggle";
+  toggleButton.dataset.id = plan.id;
+  actions.append(openButton, toggleButton);
+  card.append(actions);
+  return card;
 }
 
 function renderPlans() {
@@ -319,7 +362,9 @@ function renderPlans() {
     emptyDescription.textContent = filtered
       ? "다른 상태를 선택해 보세요."
       : "첫 발표 훈련 계획을 만들면 이곳에서 다시 볼 수 있습니다.";
-    emptyAction.hidden = filtered;
+    emptyAction.hidden = false;
+    emptyAction.textContent = filtered ? "전체 보기" : "계획 만들러 가기";
+    emptyAction.href = filtered ? "#archive":"#planner"
   }
 
   planCount.textContent = String(visiblePlans.length);
@@ -329,31 +374,7 @@ function renderPlans() {
   );
 
   visiblePlans.forEach((plan) => {
-    const card = document.createElement("li");
-    card.className = `plan-card${plan.cancelled ? " is-cancelled" : ""}`;
-    const top = document.createElement("div");
-    top.className = "plan-card-top";
-    top.append(createText("span", "plan-state", plan.cancelled ? "취소됨" : "저장됨"));
-    const date = new Date(plan.createdAt);
-    if (!Number.isNaN(date.getTime())) {
-      top.append(createText("time", "plan-date", new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long", day: "numeric" }).format(date)));
-    }
-    card.append(top);
-    card.append(createText("h3", "plan-title", plan.title));
-    card.append(createText("p", "plan-meta", `${plan.duration}분 연습 · ${qnaText(plan)}`));
-    const actions = document.createElement("div");
-    actions.className = "plan-actions";
-    const openButton = createText("button", "button button-secondary", "내용 보기");
-    openButton.type = "button";
-    openButton.dataset.action = "open";
-    openButton.dataset.id = plan.id;
-    const toggleButton = createText("button", "button button-text", plan.cancelled ? "취소 되돌리기" : "계획 취소하기");
-    toggleButton.type = "button";
-    toggleButton.dataset.action = "toggle";
-    toggleButton.dataset.id = plan.id;
-    actions.append(openButton, toggleButton);
-    card.append(actions);
-    planList.append(card);
+    planList.append(createPlanCard(plan));
   });
 }
 
@@ -367,8 +388,23 @@ filterButtons.forEach((button) => {
       item.setAttribute("aria-pressed", String(selected));
     });
     renderPlans();
+
+    const count = getVisiblePlans().length;
+    const filterName = button.textContent.trim();
+    archiveStatus.textContent = count > 0
+      ? `${filterName} 계획 ${count}개가 표시됩니다.`
+      : `${filterName} 계획이 없습니다. 다른 조건을 선택해 보세요.`;
+
   });
 });
+
+emptyState.querySelector("a").addEventListener("click", (event) => {
+  if (currentFilter === "all") return;
+  event.preventDefault();
+  const allButton = document.querySelector('[data-filter="all"]');
+  allButton.click();
+  allButton.focus();
+})
 
 planList.addEventListener("click", (event) => {
   const button = event.target.closest("button[data-action]");
@@ -394,7 +430,10 @@ planList.addEventListener("click", (event) => {
     ? `‘${plan.title}’ 계획을 ${wasCancelled ? "다시 사용할 수 있습니다" : "취소했습니다"}.`
     : "상태를 현재 화면에서 바꿨지만, 브라우저 저장 공간을 사용할 수 없어 새로고침하면 사라질 수 있습니다.";
   const nextButton = [...planList.querySelectorAll('button[data-action="toggle"]')].find((item) => item.dataset.id === plan.id);
-  nextButton?.focus();
+  const selectedFilter = document.querySelector(
+    '.filter-button[aria-pressed="true"]'
+  );
+  (nextButton || selectedFilter)?.focus();
 });
 
 document.querySelector("#dialog-close").addEventListener("click", () => planDialog.close());
