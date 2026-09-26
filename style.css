@@ -34,9 +34,32 @@ p { color: var(--muted); }
 .header-inner { min-height: 78px; display: flex; align-items: center; gap: 36px; }
 .brand { display: inline-flex; align-items: center; flex: none; text-decoration: none; }
 .brand img { display: block; width: 124px; height: auto; }
-.site-header nav { display: flex; align-items: center; gap: 28px; margin-left: auto; }
-.site-header nav a { color: var(--muted); font-size: 14px; font-weight: 700; text-decoration: none; white-space: nowrap; }
-.site-header nav a:hover { color: var(--blue); }
+
+.main-nav { 
+    margin-left: auto; 
+}
+
+.main-nav ul { 
+    display: flex;
+    align-items: center; 
+    gap: 28px; 
+    margin: 0; 
+    padding: 0; 
+    list-style: none; 
+}
+
+.main-nav a{
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowarp;
+}
+
+.main-nav a:hover { 
+    color: var(--blue); 
+}
+
 .theme-button { flex: none; min-height: 40px; padding: 7px 14px; border: 1px solid var(--line); border-radius: 11px; background: var(--surface); color: var(--ink); font-size: 13px; font-weight: 700; }
 .theme-button:hover { border-color: var(--blue); color: var(--blue); }
 
