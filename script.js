@@ -18,6 +18,11 @@ const planCount = document.querySelector("#plan-count");
 const archiveStatus = document.querySelector("#archive-status");
 const planDialog = document.querySelector("#plan-dialog");
 
+const navLinks = document.querySelectorAll(".main-nav a");
+
+const filterButtons = document.querySelectorAll(".filter-button");
+let currentFilter = "all";
+
 const saveButton = document.querySelector("#save-plan");
 const submitStatus = document.querySelector("#submit-status");
 const completeMessage = document.querySelector("#complete-message");
@@ -244,15 +249,64 @@ function createText(tag, className, content) {
   return element;
 }
 
-function renderPlans() {
-  planList.replaceChildren();
-  emptyState.hidden = plans.length !== 0;
-  planList.hidden = plans.length === 0;
-  const activeCount = plans.filter((plan) => !plan.cancelled).length;
-  planCount.textContent = String(activeCount);
-  planCount.setAttribute("aria-label", `진행 중인 계획 ${activeCount}개`);
+function updateCurrentNav() { 
+  const currentHash = window.location.hash;
 
-  plans.forEach((plan) => {
+  navLinks.forEach((link) => {
+    const current = currentHash
+      ? link.getAttribute("href") === currentHash
+      : link === navLinks[0];
+
+    link.classList.toggle("is-current", current);
+
+    if (current) {
+      link.setAttribute("aria-current", "page");
+    } else {
+      link.removeAttribute("aria-current");
+    }
+  });
+}
+
+window.addEventListener("hashchange", updateCurrentNav);
+updateCurrentNav();
+
+function getVisiblePlans() { 
+  return plans.filter((plan) => {
+    if (currentFilter === "all") return true;
+    if (currentFilter === "cancelled") return plan.cancelled;
+    return !plan.cancelled;
+  });
+}
+
+function renderPlans() {
+  const visiblePlans = getVisiblePlans();
+
+  planList.replaceChildren();
+  emptyState.hidden = visiblePlans.length !== 0;
+  planList.hidden = visiblePlans.length === 0;
+
+  const emptyTitle = emptyState.querySelector("h3");
+  const emptyDescription = emptyState.querySelector("p");
+  const emptyAction = emptyState.querySelector("a");
+
+  if (visiblePlans.length === 0) { 
+    const filtered = currentFilter !== "all";
+    emptyTitle.textContent = filtered
+      ? "선택한 상태의 계획이 없어요"
+      : "아직 저장한 계획이 없어요.";
+    emptyDescription.textContent = filtered
+      ? "다른 상태를 선택해 보세요."
+      : "첫 발표 훈련 계획을 만들면 이곳에서 다시 볼 수 있습니다.";
+    emptyAction.hidden = filtered;
+  }
+
+  planCount.textContent = String(visiblePlans.length);
+  planCount.setAttribute(
+    "aria-label",
+    `현재 표시 중인 계획 ${visiblePlans.length}개`
+  );
+
+  visiblePlans.forEach((plan) => {
     const card = document.createElement("li");
     card.className = `plan-card${plan.cancelled ? " is-cancelled" : ""}`;
     const top = document.createElement("div");
@@ -280,6 +334,19 @@ function renderPlans() {
     planList.append(card);
   });
 }
+
+filterButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    currentFilter = button.dataset.filter;
+
+    filterButtons.forEach((item) => {
+      const selected = item === button;
+      item.classList.toggle("is-active", selected);
+      item.setAttribute("aria-pressed", String(selected));
+    });
+    renderPlans();
+  });
+});
 
 planList.addEventListener("click", (event) => {
   const button = event.target.closest("button[data-action]");
