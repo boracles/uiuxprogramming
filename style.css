@@ -234,6 +234,12 @@ p { color: var(--muted); }
     color: #fff;
 }
 
+.main-nav a[aria-current="page"], 
+.filter-button[aria-pressed="true"]{
+    font-weight: 800;
+    text-decoration: underline;
+    text-underline-offset: 6px;
+}
 
 .archive-status { margin: 0 0 18px; color: var(--blue); font-size: 14px; font-weight: 700; }
 .archive-status:empty { display: none; }

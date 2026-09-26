@@ -99,7 +99,7 @@ function validateTitle() {
   if (!title) {
     titleError.textContent = "발표 제목을 입력해 주세요.";
       titleInput.setAttribute("aria-invalid", "true");
-      updateTitleExperience();
+    updateTitleExperience();
     titleInput.focus();
     return false;
   }
@@ -268,6 +268,10 @@ function updateCurrentNav() {
       link.removeAttribute("aria-current");
     }
   });
+
+  const currentLink = document.querySelector('.main-nav a[aria-current="page"]');
+  const pageName = currentLink ? currentLink.textContent.trim() : "홈";
+  document.title = pageName + " | Re:hear";
 }
 
 window.addEventListener("hashchange", updateCurrentNav);

@@ -44,7 +44,9 @@
         <p class="hero-note">수업용 중간 프로토타입입니다. 녹음과 실제 발표 훈련은 시작되지 않습니다.</p>
       </div>
       <figure class="hero-image">
-        <img src="assets/images/service.png" alt="가상 청중 앞에서 발표를 연습하는 장면" width="1920" height="1080">
+        <img src="assets/images/service.png" 
+          alt="가상 회의실에서 여섯 명의 청중을 마주하고 발표를 연습하는 장면" 
+          width="1920" height="1080">
         <figcaption>Re:hear 서비스 콘셉트 이미지</figcaption>
       </figure>
     </section>
@@ -84,7 +86,7 @@
               aria-describedby="title-help title-count title-error">
               <div class="field-meta">
                   <p id="title-help" class="field-help">2자 이상 60자 이하로 입력해 주세요.</p>
-                  <p id="title-count" class="field-count" aria-live="polite">0 / 60자</p>
+                  <p id="title-count" class="field-count">0 / 60자</p>
                 </div>
                 <p id="title-error" class="field-error" role="alert"></p>
             </div>
@@ -188,7 +190,11 @@
   </main>
 
   <dialog id="plan-dialog" class="plan-dialog" aria-labelledby="dialog-title">
-    <div class="dialog-top"><p class="eyebrow">저장한 계획</p><button id="dialog-close" class="icon-button" type="button" aria-label="닫기">×</button></div>
+    <div class="dialog-top">
+      <p class="eyebrow">저장한 계획</p>
+      <button id="dialog-close" class="icon-button" type="button" 
+        aria-label="계획 상세 닫기">×</button>
+    </div>
     <h2 id="dialog-title"></h2>
     <p id="dialog-status" class="dialog-status"></p>
     <dl class="summary-list">
