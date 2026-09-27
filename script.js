@@ -309,40 +309,6 @@ function getVisiblePlans() {
   });
 }
 
-// 한 건의 계획을 같은 구조와 상태 규칙을 가진 카드로 만듭니다.
-function createPlanCard(plan) {
-  const card = document.createElement("li");
-  card.className = plan.cancelled ? "plan-card is-cancelled" : "plan-card";
-  const top = document.createElement("div");
-  top.className = "plan-card-top";
-  const state = createText("span", "plan-state", plan.cancelled ? "취소됨" : "저장됨");
-  top.append(state);
-  const date = new Date(plan.createdAt);
-  if (!Number.isNaN(date.getTime())) {
-    const dateText = new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long", day: "numeric" }).format(date);
-    top.append(createText("time", "plan-date", dateText));
-  }
-  const icon = createText("span", "plan-card-icon", "↗");
-  icon.setAttribute("aria-hidden", "true");
-  card.append(top, icon);
-  card.append(createText("h3", "plan-title", plan.title));
-  card.append(createText("p", "plan-meta", plan.duration + "분 연습 · " + qnaText(plan)));
-
-  const actions = document.createElement("div");
-  actions.className = "plan-actions";
-  const openButton = createText("button", "button button-secondary", "내용 보기");
-  openButton.type = "button";
-  openButton.dataset.action = "open";
-  openButton.dataset.id = plan.id;
-  const toggleButton = createText("button", "button button-text", plan.cancelled ? "취소 되돌리기" : "계획 취소하기");
-  toggleButton.type = "button";
-  toggleButton.dataset.action = "toggle";
-  toggleButton.dataset.id = plan.id;
-  actions.append(openButton, toggleButton);
-  card.append(actions);
-  return card;
-}
-
 function renderPlans() {
   const visiblePlans = getVisiblePlans();
 
@@ -374,7 +340,31 @@ function renderPlans() {
   );
 
   visiblePlans.forEach((plan) => {
-    planList.append(createPlanCard(plan));
+    const card = document.createElement("li");
+    card.className = `plan-card${plan.cancelled ? " is-cancelled" : ""}`;
+    const top = document.createElement("div");
+    top.className = "plan-card-top";
+    top.append(createText("span", "plan-state", plan.cancelled ? "취소됨" : "저장됨"));
+    const date = new Date(plan.createdAt);
+    if (!Number.isNaN(date.getTime())) {
+      top.append(createText("time", "plan-date", new Intl.DateTimeFormat("ko-KR", { year: "numeric", month: "long", day: "numeric" }).format(date)));
+    }
+    card.append(top);
+    card.append(createText("h3", "plan-title", plan.title));
+    card.append(createText("p", "plan-meta", `${plan.duration}분 연습 · ${qnaText(plan)}`));
+    const actions = document.createElement("div");
+    actions.className = "plan-actions";
+    const openButton = createText("button", "button button-secondary", "내용 보기");
+    openButton.type = "button";
+    openButton.dataset.action = "open";
+    openButton.dataset.id = plan.id;
+    const toggleButton = createText("button", "button button-text", plan.cancelled ? "취소 되돌리기" : "계획 취소하기");
+    toggleButton.type = "button";
+    toggleButton.dataset.action = "toggle";
+    toggleButton.dataset.id = plan.id;
+    actions.append(openButton, toggleButton);
+    card.append(actions);
+    planList.append(card);
   });
 }
 
