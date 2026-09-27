@@ -1,14 +1,17 @@
 :root {
   color-scheme: light;
-  --page: #f8f9fc;
+  --page: #f7f8fb;
   --surface: #ffffff;
   --surface-soft: #f3f6ff;
-  --ink: #101a36;
-  --muted: #59657d;
+  --ink: #080d25;
+  --muted: #d9deeb;
   --line: #e2e7f0;
-  --blue: #0647f9;
-  --blue-hover: #003bd7;
-  --lavender: #edf0ff;
+  --blue: #073bff;
+  --blue-hover: #002ed5;
+  --lavender: #edeaff;
+  --periwinkle: #8078ff;
+  --navy: #050632;
+  --lime: #cfff5e;
   --danger: #b43147;
   --success: #18734f;
   --success-bg: #f2fbf6;
@@ -116,6 +119,10 @@ p { color: var(--muted); }
 .button:active { transform: translateY(1px); }
 .button-primary { color: #fff; background: var(--blue); box-shadow: 0 8px 20px rgba(6, 71, 249, .17); }
 .button-primary:hover { background: var(--blue-hover); }
+.button:focus-visible{
+    outline: 3px solid var(--periwinkle);
+    outline-offset: 3px;
+}
 .button-secondary { color: var(--ink); background: var(--surface); border-color: var(--line); }
 .button-secondary:hover { border-color: var(--blue); color: var(--blue); }
 .button-text { min-height: 44px; padding-inline: 8px; color: var(--blue); background: transparent; }
@@ -194,8 +201,15 @@ p { color: var(--muted); }
 .choice-card span { display: flex; flex-direction: column; min-height: 96px; padding: 17px; border: 1px solid var(--line); border-radius: 11px; background: var(--surface); }
 .choice-card strong { color: var(--ink); font-size: 18px; }
 .choice-card small { color: var(--muted); font-size: 12px; }
-.choice-card input:checked + span { border-color: var(--blue); background: #f3f6ff; box-shadow: inset 0 0 0 1px var(--blue); }
-.choice-card input:focus-visible + span { outline: 3px solid #89a7ff; outline-offset: 3px; }
+.choice-card input:checked + span { 
+    border-color: var(--blue); 
+    background: var(--surface-soft); 
+    box-shadow: inset 0 0 0 1px var(--blue); 
+}
+.choice-card input:focus-visible + span { 
+    outline: 3px solid var(--periwinkle); 
+    outline-offset: 3px; 
+}
 .qna-field { margin-top: 29px; }
 .check-row { display: flex !important; gap: 12px; align-items: flex-start; cursor: pointer; }
 .check-row input, .inline-options input { width: 18px; height: 18px; flex: none; margin: 3px 0 0; accent-color: var(--blue); }
@@ -275,7 +289,11 @@ p { color: var(--muted); }
 .plan-title { margin-bottom: 6px; font-size: 20px; overflow-wrap: anywhere; }
 .plan-meta { margin-bottom: 20px; font-size: 13px; }
 .plan-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-.plan-actions .button { min-height: 41px; padding: 7px 13px; font-size: 13px; }
+.plan-actions .button { 
+    min-height: 48px; 
+    padding: 7px 13px; 
+    font-size: 13px; 
+}
 .plan-dialog { width: min(100% - 32px, 520px); max-width: none; padding: 26px; border: 1px solid var(--line); border-radius: 18px; background: var(--surface); color: var(--ink); box-shadow: 0 24px 70px rgba(10, 20, 55, .25); }
 .plan-dialog::backdrop { background: rgba(7, 15, 41, .6); }
 .dialog-top { display: flex; justify-content: space-between; align-items: flex-start; }
