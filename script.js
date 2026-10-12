@@ -77,6 +77,7 @@ function showStep(number) {
   heading.tabIndex = -1;
   heading.focus({ preventScroll: true });
   document.querySelector("#planner").scrollIntoView({ block: "start", behavior: "smooth" });
+  if (number <= 3) saveDraft();
 }
 
 function updateTitleExperience() { 
@@ -126,6 +127,107 @@ function getFormValues() {
   };
 }
 
+const draftKey = "rehear-plan-draft-v1";
+const draftStatus = document.querySelector("#draft-status");
+const draftDiscard = document.querySelector("#draft-discard");
+
+function getDraftValues() { 
+  return {
+    ...getFormValues(),
+    step: currentStep
+  };
+}
+
+function hasDraftInput(draft) {
+  return Boolean(draft.title || draft.nickname || draft.duration !== "5" || draft.qna);
+}
+
+function saveDraft() {
+  const draft = getDraftValues();
+  if (!hasDraftInput(draft)) {
+    clearDraft();
+    return;
+  }
+  try {
+    sessionStorage.setItem(draftKey, JSON.stringify(draft));
+    const savedMessage = "작성 내용을 임시 보관했어요.";
+    if (draftStatus.textContent !== savedMessage) {
+      draftStatus.textContent = savedMessage;
+    }
+  } catch {
+    draftStatus.textContent =
+      "작성 내용을 임시 보관하지 못했어요. 새로고침하면 작성 내용이 사라질 수 있어요.";
+  }
+}
+
+form.addEventListener("input", saveDraft);
+form.addEventListener("change", saveDraft);
+
+function readDraft() {
+  try {
+    const draft = JSON.parse(sessionStorage.getItem(draftKey));
+    if (!draft || typeof draft.title !== "string") {
+      return null;
+    }
+    return draft;
+  } catch {
+    return null;
+  }
+}
+
+function restoreDraft() {
+  const draft = readDraft();
+  if (!draft) return;
+
+  titleInput.value = draft.title.slice(0, 60);
+  nicknameInput.value =
+    String(draft.nickname || "").slice(0, 10);
+  updateTitleExperience();
+  nicknameCount.textContent =
+    nicknameInput.value.length + " / 10자";
+
+  const duration = ["3", "5", "10"]
+    .includes(draft.duration)
+    ? draft.duration : "5";
+    form.elements.namedItem("duration").value = duration;
+  qnaOption.checked = draft.qna === true;
+  const count = ["1", "2", "3"]
+    .includes(draft.qnaCount)
+    ? draft.qnaCount : "2";
+  form.elements.namedItem("qna-count").value = count;
+  syncQnaOptions();
+
+  const validStep = Number.isInteger(draft.step)
+    && draft.step >= 1 && draft.step <= 3
+  const step = validStep && titleInput.value.trim().length >= 2
+    ? draft.step : 1;
+  if (step === 3) updateSummary();
+  showStep(step);
+  draftStatus.textContent =
+    `작성 내용을 불러왔어요. ${step}단계부터 이어서 작성하세요.`;
+    draftDiscard.hidden = false;
+}
+restoreDraft();
+
+function clearDraft() {
+  try { sessionStorage.removeItem(draftKey); }
+  catch { }
+  draftDiscard.hidden = true;
+  draftStatus.textContent = "";
+}
+draftDiscard.addEventListener("click", () => {
+  if(isSubmitting) return;
+  clearDraft();
+  form.reset();
+  syncQnaOptions();
+  titleError.textContent = "";
+  titleInput.removeAttribute("aria-invalid");
+  updateTitleExperience();
+  nicknameCount.textContent = "0 / 10자";
+  showStep(1);
+  draftStatus.textContent = "처음부터 입력할 수 있어요.";
+});
+
 function qnaText(plan) {
   return plan.qna ? `질문 ${plan.qnaCount}개 포함` : "포함 안 함";
 }
@@ -141,7 +243,8 @@ function updateSummary() {
 function setSubmitState(state, message) { 
     isSubmitting = state === "loading";
     form.setAttribute("aria-busy", String(isSubmitting));
-    saveButton.disabled = isSubmitting;
+  saveButton.disabled = isSubmitting;
+    draftDiscard.disabled = isSubmitting;
     saveButton.textContent = isSubmitting ? "저장하는 중..." : "계획 저장하기 →";
     submitStatus.textContent = message;
     submitStatus.classList.toggle("is-success", state === "success");
@@ -225,7 +328,7 @@ function saveCurrentPlan() {
         plans.shift();
         return false;
     }
-
+    clearDraft();
     renderPlans();
     archiveStatus.textContent = `'${plan.title}' 계획을 저장했습니다.`;
     completeMessage.textContent = `'${plan.title}' 계획을 내 계획에서 다시 열어볼 수 있습니다.`;
@@ -233,6 +336,7 @@ function saveCurrentPlan() {
 }
 
 document.querySelector("#restart-button").addEventListener("click", () => {
+  clearDraft();
   form.reset();
     syncQnaOptions();
   nicknameCount.textContent = "0 / 10자";
