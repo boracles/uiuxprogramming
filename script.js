@@ -226,6 +226,7 @@ draftDiscard.addEventListener("click", () => {
   nicknameCount.textContent = "0 / 10자";
   showStep(1);
   draftStatus.textContent = "처음부터 입력할 수 있어요.";
+  titleInput.focus();
 });
 
 function qnaText(plan) {
@@ -328,7 +329,13 @@ function saveCurrentPlan() {
         plans.shift();
         return false;
     }
-    clearDraft();
+  clearDraft();
+  currentFilter = "active";
+  filterButtons.forEach((button) => {
+    const selected = button.dataset.filter === "active";
+    button.classList.toggle("is-active", selected);
+    button.setAttribute("aria-pressed", String(selected));
+  });
     renderPlans();
     archiveStatus.textContent = `'${plan.title}' 계획을 저장했습니다.`;
     completeMessage.textContent = `'${plan.title}' 계획을 내 계획에서 다시 열어볼 수 있습니다.`;
